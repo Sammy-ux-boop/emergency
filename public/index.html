@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="leaflet/leaflet.css">
+    <link rel="stylesheet" href="leaflet-routing-machine-3.2.12 (1)/leaflet-routing-machine-3.2.12/dist/leaflet-routing-machine.css">
+    <title>Shortest Route Finder</title>
+</head>
+<body>
+    
+    <div id="task-bar">
+        <div id="route-form">
+            <label for="start_lat">Start Latitude:</label>
+            <input type="text" id="start_lat" name="startLat" placeholder="Enter start latitude" required>
+            
+            <label for="start_lng">Start Longitude:</label>
+            <input type="text" id="start_lng" name="startLng" placeholder="Enter start longitude" required>
+            
+            <button id="submit" type="button">Find Nearest Hospital</button>
+            
+            <label for="emergency-type">Select Emergency Type:</label>
+            <select id="emergency-type">
+                <option value="">--Select Emergency--</option>
+                <option value="Fire">Fire</option>
+                <option value="Accident">Accident</option>
+                <option value="Flood">Flood</option>
+                <option value="Building Collapse">Building Collapse</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="container">
+        <div id="sidebar">
+            <h2>Emergency Contacts</h2>
+            <table id="emergency-contacts">
+                <thead>
+                    <tr>
+                        <th>Emergency Type</th>
+                        <th>Contact Number</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="main-content">
+            <div id="map" style="height: 500px; margin-top: 20px;"></div>
+        </div>
+
+        <div id="first-aid-bar">
+            <h2>Precaution & Preventive Tips</h2>
+            <ul id="first-aid-tips">
+            </ul>
+        </div>
+    </div>
+
+    <script src="leaflet/leaflet.js"></script>
+    <script src="leaflet-providers-master/leaflet-providers.js"></script>
+    <script src="leaflet-routing-machine-3.2.12 (1)/leaflet-routing-machine-3.2.12/dist/leaflet-routing-machine.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
