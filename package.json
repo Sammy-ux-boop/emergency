@@ -14,7 +14,7 @@
     "@supabase/supabase-js": "^2.45.4",
     "axios": "^1.7.7",
     "cors": "^2.8.5",
-    "dotenv": "^16.0.0",  // Add this line
+    "dotenv": "^16.0.0",
     "express": "^4.21.1",
     "pg": "^8.13.0"
   }
