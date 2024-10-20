@@ -14,12 +14,11 @@ const SUPABASE_KEY = process.env.SUPABASE_KEY; // Get Key from environment varia
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // Middleware to set the correct MIME type for JavaScript files
-app.use((req, res, next) => {
-  if (req.url.endsWith('.js')) {
+app.get('/leaflet-routing-machine-3.2.12/leaflet-routing-machine.js', (req, res) => {
     res.setHeader('Content-Type', 'application/javascript');
-  }
-  next();
+    res.sendFile(path.join(__dirname, 'public', 'leaflet-routing-machine-3.2.12', 'dist', 'leaflet-routing-machine.js'));
 });
+
 
 app.use(cors());
 app.use(express.static('public')); // Serve static files from the "public" folder
