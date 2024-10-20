@@ -14,8 +14,17 @@ const SUPABASE_KEY = process.env.SUPABASE_KEY; // Get Key from environment varia
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 
-app.use(cors());
-app.use(express.static('public')); // Serve static files from the "public" folder
+// Middleware to set the correct MIME type for JavaScript files
+app.use((req, res, next) => {
+    if (req.url.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    }
+    next();
+  });
+  
+  app.use(cors());
+  app.use(express.static('public')); // Serve static files from the "public" folder
+  
 
 // Serve the index.html file
 app.get('/', (req, res) => {
