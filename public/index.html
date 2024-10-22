@@ -28,6 +28,9 @@
                 <option value="Flood">Flood</option>
                 <option value="Building Collapse">Building Collapse</option>
             </select>
+            
+            <!-- Fetch Latest News Button -->
+            <button id="fetch-news" type="button">Fetch Latest News</button>
         </div>
     </div>
 
@@ -43,17 +46,35 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <!-- Emergency contacts will be injected here -->
                 </tbody>
             </table>
         </div>
 
         <div id="main-content">
             <div id="map" style="height: 500px; margin-top: 20px;"></div>
+
+            <!-- News Section -->
+            <div id="news-task-bar">
+                <h3 id="news-heading">Breaking News</h3>
+                <div id="breaking-news" class="news-section">
+                    <!-- Breaking news items will be injected here -->
+                </div>
+
+                <!-- All news section (this will appear after breaking news) -->
+                <div id="all-news">
+                    <h3 id="all-news-heading" style="display: none;">News Headlines For the Last 24 Hours</h3>
+                    <div id="latest-news">
+                        <!-- All other news items will be injected here -->
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="first-aid-bar">
             <h2>Precaution & Preventive Tips</h2>
             <ul id="first-aid-tips">
+                <!-- First aid tips will be injected here -->
             </ul>
         </div>
     </div>

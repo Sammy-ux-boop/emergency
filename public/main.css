@@ -1,3 +1,4 @@
+/* General styling for the page */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -8,9 +9,9 @@ body {
 }
 
 #task-bar {
-    background-color: #f8f9fa;
+    background-color: #7791ac;
     padding: 10px;
-    border-bottom: 2px solid #007BFF;
+    border-bottom: 2px solid #040404;
 }
 
 #container {
@@ -21,24 +22,26 @@ body {
 
 #sidebar {
     width: 300px;
-    background-color: #f8f9fa;
+    background-color: #c1f0f3;
     padding: 20px;
-    border-right: 2px solid #007BFF;
+    border-right: 2px solid #0a0a0a;
     max-height: 100%;
     overflow-y: auto;
 }
 
 #main-content {
     flex: 1;
-    overflow-y: auto;
+    overflow: hidden; /* Prevent overflow */
     padding: 20px;
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
 }
 
 #map {
-    height: 500px;
+    height: 500px; /* Fixed height for the map */
     width: 100%;
-    margin-top: 20px;
-    border: 2px solid #007BFF;
+    margin-bottom: 20px; /* Space between map and news section */
+    border: 2px solid #0e0e0f;
     border-radius: 8px;
 }
 
@@ -50,13 +53,7 @@ label {
     margin-right: 10px;
 }
 
-input {
-    margin-right: 20px;
-    padding: 5px;
-    border-radius: 4px;
-    border: 1px solid #007BFF;
-}
-
+input,
 select {
     margin-right: 20px;
     padding: 5px;
@@ -67,7 +64,7 @@ select {
 button {
     cursor: pointer;
     padding: 5px 10px;
-    background-color: #007BFF;
+    background-color: #3300ff;
     color: white;
     border: none;
     border-radius: 4px;
@@ -75,7 +72,7 @@ button {
 
 #first-aid-bar {
     width: 300px;
-    background-color: #f8f9fa;
+    background-color: #a1b8ce;
     padding: 20px;
     border-left: 2px solid #007BFF;
     max-height: 100%;
@@ -111,4 +108,69 @@ button {
 #emergency-contacts th {
     background-color: #007BFF;
     color: white;
+}
+
+/* News Section */
+#news-container {
+    padding: 10px;
+    background-color: #ffffff; /* White background for the news */
+    border: 1px solid #ccc; /* Border for separation */
+    height: auto; /* Allow height to adjust based on content */
+    overflow: hidden; /* Prevent overflow from news items */
+}
+
+/* Both breaking news and all news in the same line */
+#news-wrapper {
+    display: flex; /* Flex container for news items */
+    align-items: center; /* Center align items vertically */
+    gap: 10px; /* Space between breaking news and all news */
+}
+
+#breaking-news, #all-news {
+    background-color: #0a848d; /* Same background color for both sections */
+    color: white; /* White text color for contrast */
+    padding: 10px; /* Padding around the text */
+    border-radius: 4px; /* Rounded corners */
+    flex: 1; /* Allow both sections to grow and take space equally */
+}
+
+/* Additional styling for breaking news content */
+.news-item {
+    opacity: 1; /* Fully visible initially */
+    transition: opacity 1s ease; /* Smooth fading effect */
+    padding: 5px;
+    border-bottom: 1px solid #007BFF; /* Underline for clarity */
+}
+
+/* Fading effect class */
+.fade-out {
+    opacity: 0; /* Fully transparent */
+}
+
+/* Additional styling for breaking news heading */
+#news-heading {
+    color: red; /* Red heading for breaking news */
+    animation: blinking 1.5s infinite; /* Blinking effect */
+}
+
+@keyframes blinking {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* Responsive design adjustments */
+@media (max-width: 768px) {
+    #sidebar {
+        width: 100%; /* Full width on small screens */
+        border-right: none; /* Remove right border */
+        border-bottom: 2px solid #0a0a0a; /* Add bottom border */
+    }
+
+    #first-aid-bar {
+        width: 100%; /* Full width on small screens */
+        margin-left: 0; /* Remove left margin */
+        border-left: none; /* Remove left border */
+        border-top: 2px solid #007BFF; /* Add top border */
+    }
 }

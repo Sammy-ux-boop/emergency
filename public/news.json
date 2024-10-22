@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Major Flooding in Western Kenya",
+    "description": "Severe flooding has affected several counties in Western Kenya, causing displacement and damage to infrastructure. Emergency services are on alert.",
+    "date": "2024-10-22T10:30:00Z"
+  },
+  {
+    "title": "Building Collapse in Nairobi",
+    "description": "A residential building collapsed in Nairobi's Eastleigh neighborhood, trapping several people. Rescue operations are ongoing.",
+    "date": "2024-10-22T23:15:00Z"
+  },
+  {
+    "title": "Fire Outbreak at Local Market",
+    "description": "A fire broke out at the Kenyatta Market in Nairobi, destroying several stalls. Firefighters managed to contain the blaze, but damages are extensive.",
+    "date": "2024-10-22T19:25:00Z"
+  },
+  {
+    "title": "Accident on the Nairobi-Mombasa Highway",
+    "description": "A multi-vehicle accident occurred on the Nairobi-Mombasa highway, leading to traffic congestion and several injuries. Authorities are investigating the cause.",
+    "date": "2024-10-22T17:00:00Z"
+  },
+  {
+    "title": "Health Ministry Issues Warning on Dengue Fever",
+    "description": "The Ministry of Health has issued a warning about an outbreak of dengue fever in coastal regions. Citizens are urged to take preventive measures.",
+    "date": "2024-10-22T23:00:00Z"
+  }
+]

@@ -1,7 +1,7 @@
 // Initialize the map and set the default view to a specific location
-const map = L.map('map').setView([-1.2985, 36.8219], 12); // Default location
+const map = L.map('map').setView([-1.2985, 36.8219], 12); // Default location (Nairobi)
 
-// Add a base layer to the map
+// Add a base layer to the map (OpenStreetMap)
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '© OpenStreetMap'
@@ -9,14 +9,13 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 // Define a custom icon for hospitals
 const hospitalIcon = L.icon({
-    iconUrl: 'images/hospitals.png', // Replace with the path to your custom icon
-    iconSize: [30, 30], // Size of the icon
-    iconAnchor: [15, 30], // Anchor point of the icon
-    popupAnchor: [0, -30] // Point from which the popup should open relative to the iconAnchor
+    iconUrl: 'images/hospitals.png', // Ensure this path is correct
+    iconSize: [30, 30], // Icon dimensions
+    iconAnchor: [15, 30], // Point of the icon that is anchored to the map
+    popupAnchor: [0, -30] // Popup position relative to the icon
 });
 
-// Initialize route control
-window.routeControl = null; // Initialize routeControl
+let routeControl = null; // Will store the routing control for navigation
 
 // Function to fetch and display hospitals on the map
 async function getHospitals() {
@@ -25,11 +24,11 @@ async function getHospitals() {
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
 
-        // Add hospitals to the map using the custom icon
+        // Add each hospital as a marker on the map with a popup
         data.features.forEach(feature => {
             const { coordinates } = feature.geometry;
             L.marker(coordinates.reverse(), { icon: hospitalIcon })
-                .bindPopup(feature.properties.name)
+                .bindPopup(`<strong>${feature.properties.name}</strong>`)
                 .addTo(map);
         });
     } catch (error) {
@@ -37,97 +36,78 @@ async function getHospitals() {
     }
 }
 
-// Function to draw route using Leaflet Routing Machine
+// Function to draw route from a starting point to the nearest hospital
 async function drawRoute(startLat, startLng) {
     try {
-        // Fetch the nearest hospital
         const response = await fetch(`/api/nearest-hospital?start_lat=${startLat}&start_lng=${startLng}`);
         if (!response.ok) throw new Error('Network response was not ok');
         const nearestHospital = await response.json();
 
-        // Check if the nearest hospital data is valid
         if (!nearestHospital || !nearestHospital.latitude || !nearestHospital.longitude) {
             alert('No hospitals found.');
             return;
         }
 
-        console.log('Nearest Hospital:', nearestHospital);
-
-        // Clear any existing route on the map
-        if (window.routeControl) {
-            console.log('Removing existing route control...');
-            map.removeControl(window.routeControl); // Ensure control is removed if it exists
-            window.routeControl = null; // Reset control
+        // Remove any existing route before adding a new one
+        if (routeControl) {
+            map.removeControl(routeControl);
         }
 
-        // Use Leaflet Routing Machine to calculate and display the route
-        window.routeControl = L.Routing.control({
+        // Create and display the route from start point to the nearest hospital
+        routeControl = L.Routing.control({
             waypoints: [
-                L.latLng(startLat, startLng), // Start point
-                L.latLng(nearestHospital.latitude, nearestHospital.longitude) // Nearest hospital coordinates
+                L.latLng(startLat, startLng),
+                L.latLng(nearestHospital.latitude, nearestHospital.longitude)
             ],
             router: L.Routing.osrmv1({
-                serviceUrl: 'https://router.project-osrm.org/route/v1' // Public OSRM service
+                serviceUrl: 'https://router.project-osrm.org/route/v1'
             }),
             showAlternatives: false,
             lineOptions: {
                 styles: [{ color: 'blue', weight: 4 }]
-            },
-            createMarker: function(i, waypoint, n) {
-                return L.marker(waypoint.latLng); // Return a marker for each waypoint
             }
         }).addTo(map);
     } catch (error) {
-        console.error('Error fetching nearest hospital or drawing route:', error);
+        console.error('Error drawing route:', error);
     }
 }
 
-// Function to handle location submission
+// Form submission handler to trigger routing
 async function submitRouteRequest() {
-    const startLat = document.getElementById('start_lat').value;
-    const startLng = document.getElementById('start_lng').value;
+    const startLat = parseFloat(document.getElementById('start_lat').value);
+    const startLng = parseFloat(document.getElementById('start_lng').value);
 
-    if (!startLat || !startLng) {
-        alert('Please enter both latitude and longitude.');
+    if (isNaN(startLat) || isNaN(startLng)) {
+        alert('Please enter valid latitude and longitude.');
         return;
     }
 
-    // Draw the route based on input coordinates
     await drawRoute(startLat, startLng);
 }
 
-// Fetch first aid tips based on emergency type
+// Fetch and display first aid tips for different emergency types
 async function getFirstAidTips(emergencyType) {
-    try {
-        let url;
-        switch (emergencyType) {
-            case 'Fire':
-                url = '/api/fire-tips';
-                break;
-            case 'Accident':
-                url = '/api/accident-tips';
-                break;
-            case 'Flood':
-                url = '/api/flood-tips';
-                break;
-            case 'Building Collapse':
-                url = '/api/collapse-tips';
-                break;
-            default:
-                throw new Error('Invalid emergency type');
-        }
+    const urlMap = {
+        'Fire': '/api/fire-tips',
+        'Accident': '/api/accident-tips',
+        'Flood': '/api/flood-tips',
+        'Building Collapse': '/api/collapse-tips'
+    };
 
+    const url = urlMap[emergencyType];
+    if (!url) return;
+
+    try {
         const response = await fetch(url);
         if (!response.ok) throw new Error('Network response was not ok');
         const tips = await response.json();
 
-        // Display tips in a designated area on the webpage
         const tipsContainer = document.getElementById('first-aid-tips');
-        tipsContainer.innerHTML = ''; // Clear previous tips
+        tipsContainer.innerHTML = ''; // Clear any previous tips
 
         tips.forEach(tip => {
             const tipElement = document.createElement('p');
-            tipElement.textContent = tip.tip; // Use appropriate field for tip text
+            tipElement.textContent = tip.tip;
             tipsContainer.appendChild(tipElement);
         });
     } catch (error) {
@@ -135,14 +115,13 @@ async function getFirstAidTips(emergencyType) {
     }
 }
 
-// Fetch emergency contact information from the server
+// Fetch and display emergency contacts
 async function getEmergencyContacts() {
     try {
         const response = await fetch('/api/emergency-contacts');
         if (!response.ok) throw new Error('Network response was not ok');
         const contacts = await response.json();
 
-        // Display contacts in the sidebar
         const contactsContainer = document.getElementById('emergency-contacts');
         contactsContainer.innerHTML = ''; // Clear previous contacts
 
@@ -161,20 +140,106 @@ async function getEmergencyContacts() {
     }
 }
 
-// Event listener for emergency type selection
-document.getElementById('emergency-type').addEventListener('change', (event) => {
-    const emergencyType = event.target.value;
-    if (emergencyType) {
-        getFirstAidTips(emergencyType);
+// Fetch and display disaster news
+async function getDisasterNews() {
+    try {
+        const response = await fetch('/api/disaster-news');
+        if (!response.ok) throw new Error('Network response was not ok');
+        const newsData = await response.json();
+
+        await displayBreakingNews(newsData); // Pass the full news data
+    } catch (error) {
+        console.error('Error fetching disaster news:', error);
     }
+}
+
+// Display breaking news with a fade-out effect
+async function displayBreakingNews(newsData) {
+    const breakingNewsContainer = document.getElementById('breaking-news');
+    breakingNewsContainer.innerHTML = ''; // Clear any previous news
+
+    const breakingNews = newsData.breaking_news;
+    let currentIndex = 0;
+
+    function updateNews() {
+        if (currentIndex >= breakingNews.length) {
+            // All breaking news displayed, start showing all news
+            changeHeadingAndShowAllNews(newsData);
+            return;
+        }
+
+        const newsItem = breakingNews[currentIndex];
+        const newsElement = document.createElement('div');
+        newsElement.className = 'news-item';
+        newsElement.innerHTML = `<strong>${newsItem.title}</strong><br>${newsItem.description}<br><em>${newsItem.reported_time}</em>`;
+        
+        breakingNewsContainer.appendChild(newsElement);
+
+        // Fade out effect
+        setTimeout(() => {
+            newsElement.style.opacity = 0; // Start fading out
+            setTimeout(() => {
+                breakingNewsContainer.removeChild(newsElement);
+                currentIndex++; // Move to the next news item
+                updateNews(); // Call the function again for the next item
+            }, 1000); // Fade out duration
+        }, 15000); // Display duration for each news item
+    }
+
+    updateNews();
+}
+
+// Change heading and start showing all news
+async function changeHeadingAndShowAllNews(newsData) {
+    const allNewsContainer = document.getElementById('all-news');
+    allNewsContainer.innerHTML = ''; // Clear any previous news
+
+    const allNewsHeading = document.getElementById('news-heading');
+    allNewsHeading.innerText = 'News Headlines For the Last 24 Hours'; // Change heading
+
+    // Display all news from the fetched data
+    displayAllNews(newsData.all_news);
+}
+
+// Display all non-breaking news one by one
+async function displayAllNews(allNews) {
+    const allNewsContainer = document.getElementById('all-news');
+    let currentIndex = 0;
+
+    function updateAllNews() {
+        if (currentIndex >= allNews.length) return;
+
+        const newsItem = allNews[currentIndex];
+        const newsElement = document.createElement('div');
+        newsElement.className = 'news-item';
+        newsElement.innerHTML = `<strong>${newsItem.title}</strong><br>${newsItem.description}<br><em>${newsItem.reported_time}</em>`;
+        
+        allNewsContainer.appendChild(newsElement);
+
+        // Fade out effect for all news
+        setTimeout(() => {
+            allNewsContainer.removeChild(newsElement);
+            currentIndex++; // Move to the next news item
+            updateAllNews(); // Call the function again for the next item
+        }, 15000); // Display time per news item
+    }
+
+    updateAllNews();
+}
+
+// Event listeners for form submission and page load
+document.getElementById('emergency-type').addEventListener('change', event => {
+    getFirstAidTips(event.target.value);
 });
 
-// Event listener for form submission
-document.getElementById('submit').addEventListener('click', (event) => {
-    event.preventDefault(); // Prevent the form from submitting the traditional way
+document.getElementById('submit').addEventListener('click', event => {
+    event.preventDefault();
     submitRouteRequest();
 });
 
-// Fetch hospitals and contacts on load
-getHospitals();
-getEmergencyContacts();
+// Load hospitals, emergency contacts, and disaster news on page load
+document.addEventListener('DOMContentLoaded', () => {
+    getHospitals(); // Load hospitals onto the map
+    getEmergencyContacts(); // Display emergency contacts
+    getDisasterNews(); // Display disaster news
+});
